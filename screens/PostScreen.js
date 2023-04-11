@@ -6,6 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { auth, db,storage } from '../firebase';
 import { Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import FooterNav from '../components/FooterNav';
 
 const PostScreen = ({navigation}) => {
 
@@ -126,6 +127,8 @@ uploadTask.on('state_changed',
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity> 
       </View>
+
+      <FooterNav/>
 
     </KeyboardAvoidingView>
   )

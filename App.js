@@ -9,6 +9,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import PostScreen from './screens/PostScreen';
 import UserUpdate from './screens/UserUpdate';
+import FooterNav from './components/FooterNav';
 
 const StartStack = createNativeStackNavigator();
 const EndStack = createNativeStackNavigator();
@@ -44,7 +45,7 @@ onAuthStateChanged(auth, (user) => {
         <StartStack.Screen name="Home" component={HomeScreen} />
         <StartStack.Screen name="Post" component={PostScreen} />
        <StartStack.Screen name="Uupdate" component={UserUpdate} />
-    
+       <StartStack.Screen name="Foot" component={FooterNav} />
       </>
       ) : (
         <>
