@@ -1,49 +1,83 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity,Button, Image, View, Platform } from 'react-native'
-import * as ImagePicker from 'expo-image-picker';
+import {Picker} from '@react-native-picker/picker'
 import React, { useEffect, useState } from 'react'
-import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { auth, db,storage } from '../firebase';
+import { db, } from '../firebase';
 import { Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import FooterNav from '../components/FooterNav';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector } from 'react-redux';
+import { selectUid } from '../components/authSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 const PostScreen = ({navigation}) => {
 
-   const [post, setPost] = useState("")
-  const [rost,  setRost] = useState("")
+   //location code
+   const [isClicked, setIsClicked] = useState(false);
+     const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [address, setAddress] = useState(null);
 
-//Pick image from expo
-const storage = getStorage();
-    const [image, setImage] = useState();
-    const[per, setPerc] = useState(null);
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    console.log(result);
+const handleGetLocation = async () => {
+      if (isClicked) {
+          setLocation(null);
+      setAddress(null);
+      setErrorMsg(null);
+      setIsClicked(false);
+      }else{
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      let geocode = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      setAddress(geocode[0]);
+      setIsClicked(true);
+          
     }
   };
-//end image code
 
- //Upload image to server
+
+  let text = 'Location and address data not available';
+  if (location && address ) {
+    text = `${address.city}, ${address.region}, ${address.country}`;
+    
+  }
+{/*End of location code*/}
+
+  //method to extract the image from the previous page for these data(photo and uid)
+    const route = useRoute();
+  const [photo, setPhoto] = useState(route.params);
+  console.log(photo)
+/////////////////////////////
+    const uid = useSelector(selectUid);
+  console.log(uid)
+///////////////////////////////
+  //download url variable for images uploaded at firebase
+   const [downloadURL, setDownloadURL] = useState(null);
+   
+   const [topic, setTopic] = useState("")
+   const [describe,setDescription] = useState("")
+   const [category,setCategory] = useState("")
+//intializing firebase storage for images 
+const storage = getStorage();
+//upload images to the database
 useEffect(()=>{
    const uploadFile = async() =>{
-    
-    const name =  image;
-     const storageRef = ref(storage, "images/" + name.slice(137,260));
-    const response = await fetch(image);
+     const date = new Date();
+    const name =  photo;
+     const storageRef = ref(storage, "images/" + date.toLocaleString() + name.slice(137,260));
+    const response = await fetch(photo);
 const blob = await response.blob();
 const uploadTask = uploadBytesResumable(storageRef, blob);
- 
-
 uploadTask.on('state_changed', 
   (snapshot) => {
     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -67,91 +101,129 @@ uploadTask.on('state_changed',
     // For instance, get the download URL: https://firebasestorage.googleapis.com/...
     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
       console.log('File available at', downloadURL);
-     setImage({downloadURL});
+     setPhoto(downloadURL);
     });
   }
 );
    }
-  
-   image && uploadFile();
+   photo && uploadFile();
+},[downloadURL] )
 
-},[{image}] )
-
-
-  const route = useRoute()
-  const uid = route.params?.uid
-
- 
-
-  const handleData = async (e) => {
-     console.log(uid)
+  //upload other post details to the database
+  const handleData = async (e) => { 
    try{
 
      await setDoc(doc(db, post ,uid),{
-      post,
-      rost,
-      image,
+      topic,
+      describe,
+      location,
+      selectedOption,
       timeStamp: serverTimestamp(),
      })
     } catch(err) {
       console.log(err);
-    }
-    
+    }  
   }; 
+   //OPTIONS CODE TO PICK CATEGORY
+   const [selectedOption, setSelectedOption] = useState('option1');
+  const [ocation, setOcation] = useState('');
+
+  const handleOptionChange = itemValue => {
+    setSelectedOption(itemValue);
+    setOcation(itemValue);
+  };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behaviour="padding">
 
-      <View style={styles.inputcontainer}>
-        <TextInput placeholder='Email' 
-        value={post} 
-        onChangeText={text => setPost(text)} 
+    <LinearGradient colors={['#420C58',  '#211134', '#594677']} style={styles.contain} behaviour="padding">
+    <KeyboardAvoidingView  >
+
+      {/*Image*/}
+      {photo && <Image source={{ uri: photo }} style={{ width: 50, height: 50 ,marginBottom: 20}} />}
+
+       {/*Topic input */}
+       <Text style={styles.Label}> Topic </Text>
+        <TextInput placeholder='Enter topic of event ' 
+        placeholderTextColor="white"
+        value={topic} 
+        onChangeText={text => setTopic(text)} 
         style={styles.input}/>
        
-       <TextInput placeholder='Password' 
-        value={rost} 
-        onChangeText={text => setRost(text)} 
+       {/*DESCRIBE INPUT*/}
+       <Text style={styles.Label}> Description</Text>
+       <TextInput placeholder='Description or summary of event ' 
+       placeholderTextColor="white"
+        value={describe} 
+        onChangeText={text => setDescription(text)} 
         style={styles.input}
-        secureTextEntry
+        
         />
           
-         {/* <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>*/}
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-            {/*</View>*/}
-      </View>
+          {/*Location*/}
+          <Text style={styles.Label}> Location</Text>
+         <TextInput placeholder='Input location of event or click to get location' 
+       placeholderTextColor="white"
+        value={location} 
+        onChangeText={text => {setLocation(); }} 
+        style={styles.input}
+        
+        />
+            {errorMsg ? (
+        <Text >{errorMsg}</Text>
+      ) : location ? (
+        <>
+          <Text style={styles.locate}>Latitude: {location.coords.latitude}</Text>
+          <Text style={styles.locate}>Longitude: {location.coords.longitude}</Text>
+          <Text style={styles.locate}>Address: {address?.city}, {address?.region} {address?.postalCode}</Text>
+            <Button title="Remove Location" onPress={handleGetLocation} />
+        </>
+      ) : (
+         <Button title="Get Location" onPress={handleGetLocation} />
+      )}
 
-      <View style={styles.buttonContainer}>
+         <Text style={styles.Label}>Category:</Text>
+         <View style={styles.box}>
+      <Picker 
+        selectedValue={selectedOption}
+        onValueChange={handleOptionChange}
+      >
+        <Picker.Item label="Accident" value="Accident" style={styles.opption} />
+        <Picker.Item label="Riot" value="Riot" style={styles.opption}/>
+        <Picker.Item label="Fighting" value="Fighting"  style={styles.opption} />
+      </Picker>
+      </View>
+      {/*<Text>Selected option: {selectedOption}</Text>
+      <Text>Location: {ocation}</Text>*/}
+      
+        {/*Submit*/}
         <TouchableOpacity onPress={() => {handleData();}}  ////disabled= {per !==null && per<100} 
         style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>POST</Text>
         </TouchableOpacity> 
-      </View>
-
-      <FooterNav/>
-
+   
+   
     </KeyboardAvoidingView>
+      <FooterNav/>
+    </LinearGradient>
   )
 }
 
 export default PostScreen
 
 const styles = StyleSheet.create({
-container:{
+  contain:{
     flex:1,
-    justifyContent: 'center',
-    alignItems: "center",
-    
-},
-inputcontainer:{
-   width: "80%",
+    padding:20, 
 },
 input:{
-backgroundColor: "white",
-paddingHorizontal: 15,
-paddingVertical: 10,
-borderRadius:10,
-marginTop:5,
+ margin: 12,
+    //borderWidth: 1,
+    borderBottomWidth:1,
+    borderColor:"#D1D0D0",
+    fontWeight: "500",
+  fontSize: 15,
+paddingBottom:20,
+color:"white",
 },
 
 buttonContainer:{
@@ -161,11 +233,13 @@ buttonContainer:{
   marginTop: 40,
 },
 button:{
-  backgroundColor: '#0782f9',
+  backgroundColor: '#594677',
   width:"100%",
   padding: 15,
   borderRadius:10,
   alignItems:"center",
+  marginTop:30,
+
 },
 
 buttonOutline:{
@@ -176,6 +250,7 @@ buttonOutline:{
 },
 buttonText:{
   color: "white",
+
   fontWeight: "700",
   fontSize: 16,
 },
@@ -184,6 +259,29 @@ buttonOutlineText:{
   fontWeight: "700",
   fontSize: 16,
 },
+locate:{
+  fontSize: 20,
+  color:"red"
+},
+Label:{
+  fontSize:20,
+  color:"#D1D0D0",
+  fontWeight: "700",
+  
+},
+opption:{
+  fontSize:20,
+  color:"#D1D0D0",
+  fontWeight: "700",
+  backgroundColor:"black",
+  width:100,
+},
+box:{
+  borderWidth: 3,
+  margin: 10,
+  borderColor:"white"
+}
+
 })
 
 

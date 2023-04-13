@@ -10,6 +10,10 @@ import HomeScreen from './screens/HomeScreen';
 import PostScreen from './screens/PostScreen';
 import UserUpdate from './screens/UserUpdate';
 import FooterNav from './components/FooterNav';
+import Discovers from './screens/Discover';
+import Search from './screens/Search';
+import { Provider } from 'react-redux';
+import store from './components/store';
 
 const StartStack = createNativeStackNavigator();
 const EndStack = createNativeStackNavigator();
@@ -38,14 +42,20 @@ onAuthStateChanged(auth, (user) => {
 )
 
   return (
+     <Provider store={store}>
            <NavigationContainer>
      <StartStack.Navigator>
+
+    
       {isLoggedIn ? (
         <>
+        
         <StartStack.Screen name="Home" component={HomeScreen} />
         <StartStack.Screen name="Post" component={PostScreen} />
        <StartStack.Screen name="Uupdate" component={UserUpdate} />
-       <StartStack.Screen name="Foot" component={FooterNav} />
+       <StartStack.Screen name="Search" component={Search} />
+       <StartStack.Screen name="Discover" component={Discovers} />
+       
       </>
       ) : (
         <>
@@ -56,7 +66,7 @@ onAuthStateChanged(auth, (user) => {
       )}
      </StartStack.Navigator>
     </NavigationContainer>
-
+    </Provider>
   
 
   )

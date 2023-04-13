@@ -4,12 +4,20 @@ import React, { useEffect, useState } from 'react'
 import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { auth } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { setUid } from '../components/authSlice';
+
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
 
 
+ const dispatch = useDispatch();
+
+
+
+ 
 
     {/*  useEffect(() => {
 
@@ -39,6 +47,8 @@ onAuthStateChanged(auth, (user) => {
     const user = userCredential.user;
     console.log(user.email);
     console.log(user.uid)
+    const uid = user.uid;
+    dispatch(setUid(uid));
     // ...
   })
  .catch(error =>  alert(error.message))
@@ -99,7 +109,7 @@ onAuthStateChanged(auth, (user) => {
         
         <Text style={styles.signinfo}>Don't have an account?</Text>
           <Text style={styles.buttonTet} onPress={SignUp}>Sign Up</Text>
-        
+          
        </View>
      </LinearGradient>
 

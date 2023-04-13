@@ -1,10 +1,13 @@
 import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useContext }  from 'react'
 import FooterNav from '../components/FooterNav'
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector } from 'react-redux';
+import { selectUid } from '../components/authSlice';
 
 const HomeScreen = ({navigation}) => {
-
+  const uid = useSelector(selectUid);
+  console.log(uid)
   return (
     <LinearGradient colors={['#420C58',  '#211134', '#594677']} style={styles.container} behaviour="padding">
     <KeyboardAvoidingView>
@@ -12,8 +15,11 @@ const HomeScreen = ({navigation}) => {
       <Text>HomeScreen</Text>
           
     </View>
-    <FooterNav/>
+    
     </KeyboardAvoidingView>
+   
+    <FooterNav/>
+
     </LinearGradient>
   )
 }

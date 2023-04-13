@@ -77,13 +77,17 @@ export default FooterNav;
 
 const styles = StyleSheet.create({
   container: {
-    height: 50,
+    
     justifyContent: 'space-between',
     alignItems: 'center',
     display:"flex",
     flexDirection:"row",
-    padding:10,
+    gap:50,
+    padding:30,
+    position:"absolute",
+    bottom:0,
    
+    
   },
   text: {
     fontWeight: 'bold',
