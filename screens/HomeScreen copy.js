@@ -3,31 +3,35 @@ import React, { useEffect, useState } from 'react'
 import FooterNav from '../components/FooterNav'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector } from 'react-redux';
-import { selectUid , selectAmail} from '../components/authSlice';
+import { selectUid } from '../components/authSlice';
 import { doc, getDoc } from "firebase/firestore";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
-import { db } from '../firebase';
-import { getAuth, getUser, onAuthStateChanged } from 'firebase/auth';
+import { db, auth } from '../firebase';
 
 const HomeScreen = ({ navigation }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const uid = useSelector(selectUid);
-  const email = useSelector(selectAmail);
-  console.log(uid);
-  console.log(email);
 
-  
+  const getUserEmail = async (userId) => {
+    const userDoc = await doc(db, "users", userId).get();
+    if (userDoc.exists()) {
+      return userDoc.data().email;
+    } else {
+      return null;
+    }
+  }
+
   useEffect(() => {
     const citiesRef = collection(db, "cities");
-    
     const unsubscribe = onSnapshot(citiesRef, (snapshot) => {
       const newCities = [];
-      snapshot.forEach( async (doc) => {
+      snapshot.forEach((doc) => {
         const city = doc.data();
         const id = doc.id;
-        newCities.push({ ...city, id,  });
+        const userEmail = getUserEmail(city.userId);
+        newCities.push({ ...city, id, userEmail });
       });
       setCities(newCities);
       setLoading(false);
@@ -37,12 +41,10 @@ const HomeScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <View key={item.id}>
-    <Text style={styles.title}>{item.email}</Text>
       <Text style={styles.title}>{item.topic}</Text>
       <Text style={styles.description}>{item.describe}</Text>
-      <Text style={styles.userId}>User ID: {item.id}</Text>
-      <Image source={{ uri: item.photo }} style={{ width: 450, height: 500 }} />
- 
+      <Text style={styles.userId}>User ID: {item.userId}</Text>
+      
     </View>
   );
 

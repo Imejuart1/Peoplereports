@@ -5,7 +5,7 @@ import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , o
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { auth } from '../firebase';
 import { useDispatch } from 'react-redux';
-import { setUid } from '../components/authSlice';
+import { setUid, setAmail} from '../components/authSlice';
 
 
 const LoginScreen = ({navigation}) => {
@@ -14,11 +14,6 @@ const LoginScreen = ({navigation}) => {
 
 
  const dispatch = useDispatch();
-
-
-
- 
-
     {/*  useEffect(() => {
 
     const auth = getAuth();
@@ -48,7 +43,8 @@ onAuthStateChanged(auth, (user) => {
     console.log(user.email);
     console.log(user.uid)
     const uid = user.uid;
-    dispatch(setUid(uid));
+    dispatch(setUid({ uid, email }));
+    dispatch(setAmail(user.email));
     // ...
   })
  .catch(error =>  alert(error.message))

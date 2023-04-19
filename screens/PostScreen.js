@@ -3,12 +3,12 @@ import {Picker} from '@react-native-picker/picker'
 import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { db, } from '../firebase';
-import { Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
+import { collection, Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
 import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import FooterNav from '../components/FooterNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector } from 'react-redux';
-import { selectUid } from '../components/authSlice';
+import { selectUid , selectAmail} from '../components/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
@@ -59,6 +59,7 @@ const handleGetLocation = async () => {
   console.log(photo)
 /////////////////////////////
     const uid = useSelector(selectUid);
+    const email = useSelector(selectAmail);
   console.log(uid)
 ///////////////////////////////
   //download url variable for images uploaded at firebase
@@ -109,13 +110,15 @@ uploadTask.on('state_changed',
    photo && uploadFile();
 },[downloadURL] )
 
+
   //upload other post details to the database
   const handleData = async (e) => { 
    try{
-
-     await setDoc(doc(db, post ,uid),{
+     await setDoc(doc(db, "cities" ,uid),{
+      email,
       topic,
       describe,
+      photo,
       location,
       selectedOption,
       timeStamp: serverTimestamp(),
@@ -125,7 +128,7 @@ uploadTask.on('state_changed',
     }  
   }; 
    //OPTIONS CODE TO PICK CATEGORY
-   const [selectedOption, setSelectedOption] = useState('option1');
+   const [selectedOption, setSelectedOption] = useState('');
   const [ocation, setOcation] = useState('');
 
   const handleOptionChange = itemValue => {
