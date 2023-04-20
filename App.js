@@ -8,6 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import PostScreen from './screens/PostScreen';
+import PostScreen2 from './screens/Postscreen2';
 import UserUpdate from './screens/UserUpdate';
 import FooterNav from './components/FooterNav';
 import Discovers from './screens/Discover';
@@ -50,11 +51,15 @@ onAuthStateChanged(auth, (user) => {
       {isLoggedIn ? (
         <>
         
-        <StartStack.Screen name="Home" component={HomeScreen} />
-        <StartStack.Screen name="Post" component={PostScreen} />
-       <StartStack.Screen name="Uupdate" component={UserUpdate} />
-       <StartStack.Screen name="Search" component={Search} />
-       <StartStack.Screen name="Discover" component={Discovers} />
+        <StartStack.Screen   options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white',})} name="Home" component={HomeScreen} />
+        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post" component={PostScreen} />
+        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
+       <StartStack.Screen options={{headerShown: false}} name="Uupdate" component={UserUpdate} />
+       <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
+       <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
        
       </>
       ) : (
