@@ -206,7 +206,7 @@ uploadTask.on('state_changed',
    
    
     </KeyboardAvoidingView>
-      <FooterNav/>
+      
     </LinearGradient>
   )
 }

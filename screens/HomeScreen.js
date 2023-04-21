@@ -1,4 +1,4 @@
-import { TouchableOpacity,KeyboardAvoidingView, StyleSheet, Text, View, Image, FlatList } from 'react-native'
+import { ScrollView, TouchableOpacity,KeyboardAvoidingView, StyleSheet, Text, View, Image, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import FooterNav from '../components/FooterNav'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -51,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
         <View key={item.id} >
           <Text style={styles.title}>{item.email}</Text>
           <Text style={styles.title}>{item.selectedOption}</Text>
-          <Image source={{ uri: item.photo }} style={{ width: 450, height: 500 , }} />
+          <Image source={{ uri: item.photo }} style={{ width: 450, height: 480 , }} />
           <View style={styles.info}>
             <Text style={styles.title1}>{item.topic}</Text>
             <Text style={styles.description}>{item.describe}</Text>
@@ -71,7 +71,6 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.eventid}>All</Text>
           </TouchableOpacity>
           <View style={styles.evens}></View>
-          
           <TouchableOpacity style={[ styles.events,selectedOption==="Accident" && styles.selectedOption]} onPress={() => handleEventSelection('Accident')}>
          <Text style={styles.eventid}>Accident</Text>
           </TouchableOpacity>
@@ -83,23 +82,19 @@ const HomeScreen = ({ navigation }) => {
          </TouchableOpacity>
      
       </View>
-        <View style={styles.contain}>
+     
         {loading ? (
           
           <Text>Loading data...</Text>
-        ) : (
-
-          
+        ) : (   
           <FlatList
             data={cities}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
-            
           />
         )}
-      </View>
       </KeyboardAvoidingView>
-      <FooterNav />
+      
     </LinearGradient>
   )
 }
@@ -109,14 +104,12 @@ export default HomeScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    
     padding: 20,
   },
-  contain:{
-   
+  safeAreaView:{
+    
    },
   event:{
-   
     display:"flex",
     flexDirection:"row",
     justifyContent:"space-evenly",
@@ -125,14 +118,14 @@ const styles = StyleSheet.create({
     
   },
   events:{
-    marginBottom:20,
+    marginBottom:10,
      padding:10,
      borderWidth: 2,
      borderColor:"#D1D0D0",
   },
   evens:{
     borderRightWidth: 6,
-    marginBottom:20,
+    marginBottom:10,
     borderColor:"#D1D0D0",
   },
   eventid:{
@@ -168,7 +161,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   info:{
-    marginTop:7
+    marginTop:7,
+    marginBottom:10,
   },
   selectedOption:{
      backgroundColor:  '#7B61FF',
