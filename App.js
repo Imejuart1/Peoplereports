@@ -4,6 +4,7 @@ import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , o
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -19,6 +20,23 @@ import store from './components/store';
 const StartStack = createNativeStackNavigator();
 const EndStack = createNativeStackNavigator();
 const auth = getAuth();
+const Tab = createBottomTabNavigator();
+
+function HomeStackScreen() {
+  return (
+    <StartStack.Navigator>
+<StartStack.Screen   options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white',})} name="Home" component={HomeScreen} />
+        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post" component={PostScreen} />
+        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
+       <StartStack.Screen options={{headerShown: false}} name="Uupdate" component={UserUpdate} />
+       <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
+       <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
+       </StartStack.Navigator>
+  );
+}
 
 export default function App() {
 
@@ -38,38 +56,32 @@ onAuthStateChanged(auth, (user) => {
 
   }
 });
-   
   }, []
 )
 
   return (
      <Provider store={store}>
            <NavigationContainer>
-     <StartStack.Navigator>
-
-    
+           
+     
+     
       {isLoggedIn ? (
         <>
-        
-        <StartStack.Screen   options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
-         headerTintColor: 'white',})} name="Home" component={HomeScreen} />
-        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
-         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post" component={PostScreen} />
-        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
-         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
-       <StartStack.Screen options={{headerShown: false}} name="Uupdate" component={UserUpdate} />
-       <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
-       <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
-       
+        <Tab.Navigator tabBar={(props) => <FooterNav {...props} />}>
+        <Tab.Screen name="Home" options={{headerShown: false}} component={HomeStackScreen} />
+        </Tab.Navigator>
+      
       </>
       ) : (
-        <>
+        <StartStack.Navigator>
         <StartStack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
         <StartStack.Screen options={{headerShown: false}} name="RegisterScreen" component={RegisterScreen}/>
-       </>
+       </StartStack.Navigator>
        
       )}
-     </StartStack.Navigator>
+      
+   
+    
     </NavigationContainer>
     </Provider>
   
