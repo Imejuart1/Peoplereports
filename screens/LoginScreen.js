@@ -45,6 +45,7 @@ onAuthStateChanged(auth, (user) => {
     const uid = user.uid;
     dispatch(setUid({ uid, email }));
     dispatch(setAmail(user.email));
+    navigation.navigate('Home');
     // ...
   })
  .catch(error =>  alert(error.message))

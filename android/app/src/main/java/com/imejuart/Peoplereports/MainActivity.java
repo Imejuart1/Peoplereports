@@ -1,4 +1,4 @@
-package com.peoplereports;
+package com.imejuart.Peoplereports;
 
 import android.os.Build;
 import android.os.Bundle;

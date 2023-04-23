@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
-import { StyleSheet, Text, View } from 'react-native';
+import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged, signOut} from "firebase/auth";
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -22,21 +22,32 @@ const EndStack = createNativeStackNavigator();
 const auth = getAuth();
 const Tab = createBottomTabNavigator();
 
+ const handleLogout = () => {
+    signOut(auth);
+  };
 function HomeStackScreen() {
   return (
     <StartStack.Navigator>
 <StartStack.Screen   options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
-         headerTintColor: 'white',})} name="Home" component={HomeScreen} />
+         headerTintColor: 'white',  headerRight: () => (
+              <Button
+                onPress={handleLogout}
+                title="Logout"
+              />
+            )})} name="Home" component={HomeScreen} />
         <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post" component={PostScreen} />
         <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
-       <StartStack.Screen options={{headerShown: false}} name="Uupdate" component={UserUpdate} />
+       <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate" component={UserUpdate} />
        <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
        <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
        </StartStack.Navigator>
   );
 }
+
+
 
 export default function App() {
 
@@ -50,21 +61,24 @@ onAuthStateChanged(auth, (user) => {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/firebase.User
     setIsLoggedIn(true);
+ 
     // ...
   } else {
     console.log("User is signed out")
-
+    setIsLoggedIn(false);
   }
 });
   }, []
 )
-
+ const [isNewUser, setIsNewUser] = useState(false);
+ const handleRegister = () => {
+  setIsNewUser(true);
+};
   return (
      <Provider store={store}>
            <NavigationContainer>
-           
-     
-     
+          
+
       {isLoggedIn ? (
         <>
         <Tab.Navigator tabBar={(props) => <FooterNav {...props} />}>
@@ -74,8 +88,9 @@ onAuthStateChanged(auth, (user) => {
       </>
       ) : (
         <StartStack.Navigator>
-        <StartStack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
-        <StartStack.Screen options={{headerShown: false}} name="RegisterScreen" component={RegisterScreen}/>
+        {!isLoggedIn &&<StartStack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />}
+         {!isLoggedIn && <StartStack.Screen options={{headerShown: false }} initialParams={{ handleRegister }} name="RegisterScreen" component={RegisterScreen}/>}
+        
        </StartStack.Navigator>
        
       )}

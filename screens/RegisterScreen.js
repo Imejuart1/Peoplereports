@@ -8,38 +8,16 @@ import { auth } from '../firebase';
 const RegisterScreen = ({navigation}) => {
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
-
-
-
-  {/*useEffect(() => {
-
-    const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/firebase.User
-    const uid = user.uid;
-     navigation.navigate("Login", {uid})
-    
-    // ...
-  } else {
-    console.log("User is signed out")
-
-  }
-});
-   
-  }, []
-)*/}
+ 
   const handleSignUp = () => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
     .then(userCredentials => {
       const user = userCredentials.user;
       console.log(user.email);
-       navigation.navigate('Login');
       })
       .catch(error =>  alert(error.message))
-     
+        navigation.navigate("Login")
   } 
 
     const Login = () =>{

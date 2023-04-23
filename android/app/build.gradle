@@ -113,13 +113,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.peoplereports"
+    namespace 'com.imejuart.Peoplereports'
     defaultConfig {
-        applicationId "com.peoplereports"
+        applicationId 'com.imejuart.Peoplereports'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
 
     splits {
