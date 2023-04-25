@@ -1,98 +1,91 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { auth } from '../firebase';
+import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
+import { useNavigation, useRoute ,useFocusEffect} from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { selectUid , selectAmail} from '../components/authSlice';
+import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { db } from '../firebase';
+import { getFirestore, collection, onSnapshot, doc, getDoc } from "firebase/firestore";
 
 const UserUpdate = ({navigation}) => {
-  const [email, setEmail] = useState("")
-  const [password,  setPassword] = useState("")
- 
-  const handleSignUp = () => {
-    const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-    .then(userCredentials => {
-      const user = userCredentials.user;
-      console.log(user.email);
-      })
-      .catch(error =>  alert(error.message))
-        navigation.navigate("Login")
-  } 
-
-    const Login = () =>{
-      navigation.navigate("Login")
-    }
   
+   const [cities, setCities] = useState([]);
+    const [userData, setUserData] = useState(null);
+   const [profile, setProfile] = useState(null);
+   const [email, setEmail] = useState("")
+  const [password,  setPassword] = useState("")
+  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [photo, setPhoto] = useState("");
+    const uid = useSelector(selectUid);
+
+useFocusEffect(
+React.useCallback(() => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    setEmail(user.email);
+    setUsername(user.displayName);
+    setPhoto(user.photoURL);
+  }
+}, [])
+);
+
+useEffect(() => {
+
+const fetchUserData = async () => {
+try{
+  const docRef = doc(db, "users", uid)
+  const docSnap = await getDoc(docRef)
+  setUserData(docSnap.data())
+}catch(error){
+  console.log(error)
+}
+};
+ fetchUserData();
+}, []);
+
    return (
     
     
          <LinearGradient colors={['#420C58',  '#211134', '#594677']} 
 
-         style={styles.container} behaviour="padding">
-         <KeyboardAvoidingView>
-
+         style={styles.container} >
       <View style={styles.contain}>
+    <View style={styles.profilePictureContainer}>
+    {photo ? (
+           <Image source={{ uri: photo }} style={styles.profilePicture}></Image>
+      ) : (
+         <Image
+          style={styles.profilePicture}
+          source={{ uri: 'https://i.imgur.com/SYVJvjA.png' }}   
+        />
+      )}
+     </View>
+       <View>
+        <Text style={styles.input}>Email: {email}</Text>
   
-       <View>
-        <TextInput placeholder='Username' 
-        placeholderTextColor="white"
-        value={email} 
-        onChangeText={text => setEmail(text)} 
-        style={styles.input}
-         
-        />
        </View>
 
        <View>
-        <TextInput placeholder='Full Name' 
-        placeholderTextColor="white"
-        value={email} 
-        onChangeText={text => setEmail(text)} 
-        style={styles.input}
-         
-        />
+         <Text style={styles.input}>Username: {username}</Text>
        </View>
       <View>
-        <TextInput placeholder='Username/Email' 
-        placeholderTextColor="white"
-        value={email} 
-        onChangeText={text => setEmail(text)} 
-        style={styles.input}
-         
-        />
+          {userData ?
+            <Text style={styles.input}>FullName: {userData.fullName}</Text>
+            :
+            <Text style={styles.input} >FullName: Loading</Text>
+            }
        </View>
 
-       <View>
-       <TextInput placeholder='Password' 
-        placeholderTextColor="white"
-        value={password} 
-        onChangeText={text => setPassword(text)} 
-        style={styles.input}
-        secureTextEntry
-        />
-        </View>
-
-      {/*</View>*/}
-
-      {/*<View style={styles.buttonContainer}>*/}
       <View>
-        <TouchableOpacity onPress={handleSignUp} style={styles.button}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+        <TouchableOpacity  style={styles.button} onPress={() => navigation.navigate("Uupdate1", {item1: email, item2:username, item3:userData.fullName, item4:photo})}>
+          <Text style={styles.buttonText}>Edit</Text>
         </TouchableOpacity> 
        </View>
-
-  
       </View>
-
-    
-      </KeyboardAvoidingView>
-                  <View style={styles.sign}>
-        
-        <Text style={styles.signinfo}>Don't have an account?</Text>
-          <Text style={styles.buttonTet} onPress={Login}>Sign in</Text>
-        
-       </View>
      </LinearGradient>
 
      
@@ -136,26 +129,26 @@ button:{
 buttonText:{
   color: "#D1D0D0",
   fontWeight: "700",
-  fontSize: 16,
+  fontSize: 26,
   
 },
-sign:{
-    position:'absolute',
-    bottom:0,
-    padding: 20,
-    display:"flex",
-    flexDirection:"row",
-    gap:10
-    
-},
-signinfo:{
-  color:"#D1D0D0",
-  fontSize: 22,
-  fontWeight: 400,
-},
-buttonTet:{
-  color:"#420C58",
-  fontSize: 22,
-  fontWeight: 400,
-}
+  profilePictureContainer: {
+    position: 'relative',
+    marginBottom: 30
+  },
+  profilePicture: {
+    width: 150,
+    height: 150,
+    borderRadius: 50,
+    alignSelf:"center",
+    marginBottom: 0
+  },
+  imageIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,ackgroundColor: 'transparent',
+    zIndex: 1,
+  },
+
+
 })

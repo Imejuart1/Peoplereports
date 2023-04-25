@@ -11,6 +11,7 @@ import HomeScreen from './screens/HomeScreen';
 import PostScreen from './screens/PostScreen';
 import PostScreen2 from './screens/Postscreen2';
 import UserUpdate from './screens/UserUpdate';
+import UserUpdate1 from './screens/UserUpdate1';
 import FooterNav from './components/FooterNav';
 import Discovers from './screens/Discover';
 import Search from './screens/Search';
@@ -41,6 +42,8 @@ function HomeStackScreen() {
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate" component={UserUpdate} />
+                <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate1" component={UserUpdate1} />
        <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
        <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
        </StartStack.Navigator>
