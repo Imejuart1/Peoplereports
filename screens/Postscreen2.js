@@ -5,17 +5,20 @@ import { useNavigation, useRoute ,useFocusEffect } from '@react-navigation/nativ
 import { db, } from '../firebase';
 import { collection, Timestamp, doc, serverTimestamp, setDoc , addDoc,getFirestore} from 'firebase/firestore';
 import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import FooterNav from '../components/FooterNav';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector } from 'react-redux';
 import { selectUid , selectAmail} from '../components/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
+import useLocation from '../components/Location';
+import uploadImage from '../components/Expoupload'
+
 
 const PostScreen2 = ({navigation}) => {
-
+    const { isClicked, location, errorMsg, address, handleGetLocation, manualLocation, setManualLocation, } = useLocation();
     const [username, setUsername] = useState('');
+    const [setLocation] = useState("");
      const [hoto, setHoto] = useState("");
   useFocusEffect(
 React.useCallback(() => {
@@ -29,55 +32,21 @@ React.useCallback(() => {
   }
 }, [])
 );
-
    //location code
-   const [isClicked, setIsClicked] = useState(false);
-     const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [address, setAddress] = useState(null);
-
-const handleGetLocation = async () => {
-      if (isClicked) {
-          setLocation(null);
-      setAddress(null);
-      setErrorMsg(null);
-      setIsClicked(false);
-      }else{
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      let geocode = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      setAddress(geocode[0]);
-      setIsClicked(true);
-          
-    }
-  };
-
-
   let text = 'Location and address data not available';
   if (location && address ) {
     text = `${address.city}, ${address.region}, ${address.country}`;
-    
   }
 {/*End of location code*/}
-
   //method to extract the image from the previous page for these data(photo and uid)
     const route = useRoute();
   const [photo, setPhoto] = useState(route.params);
   console.log(photo)
-/////////////////////////////
+
     const uid = useSelector(selectUid);
     const email = useSelector(selectAmail);
   console.log(uid)
-///////////////////////////////
+
   //download url variable for images uploaded at firebase
    const [downloadURL, setDownloadURL] = useState(null);
    
@@ -87,69 +56,31 @@ const handleGetLocation = async () => {
 //intializing firebase storage for images 
 const storage = getStorage();
 //upload images to the database
-useEffect(()=>{
-   const uploadFile = async() =>{
-     const date = new Date();
-    const name =  photo;
-     const storageRef = ref(storage, "images/" + date.toLocaleString() + name.slice(137,260));
-    const response = await fetch(photo);
-const blob = await response.blob();
-const uploadTask = uploadBytesResumable(storageRef, blob);
-uploadTask.on('state_changed', 
-  (snapshot) => {
-    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    console.log('Upload is ' + progress + '% done');
-    switch (snapshot.state) {
-      case 'paused':
-        console.log('Upload is paused');
-        break;
-      case 'running':
-        console.log('Upload is running');
-        break;
-        default:
-          break;
-    }
-  }, 
-  (error) => {
-    console.log(error);
-  }, 
-  () => {
-    // Handle successful uploads on complete
-    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      console.log('File available at', downloadURL);
-     setPhoto(downloadURL);
-    });
-  }
-);
-   }
-   photo && uploadFile();
-},[downloadURL] )
-
+useEffect(() => {
+  photo && uploadImage(photo, setPhoto);
+}, [downloadURL]);
 
   //upload other post details to the database
+   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [useManualLocation, setUseManualLocation] = useState(false);
+  const locationData = useManualLocation ? manualLocation : address;
   const handleData = async (e) => { 
    try{
+    setIsLoading(true);
      await addDoc(collection(db, "cities" ),{
-      id: uid,
-      hoto,
-      username,
-      email,
-      topic,
-      describe,
-      photo,
-      location,
-      selectedOption,
-      timeStamp: serverTimestamp(),
+      id: uid,hoto,username,email,topic,describe,photo,locationData,selectedOption,timeStamp: serverTimestamp(),
+      
      })
+       setIsLoading(false);
+      setIsSuccess(true);
     } catch(err) {
       console.log(err);
     }  
   }; 
    //OPTIONS CODE TO PICK CATEGORY
-   const [selectedOption, setSelectedOption] = useState('');
+   const [selectedOption, setSelectedOption] = useState('Accident');
   const [ocation, setOcation] = useState('');
-
   const handleOptionChange = itemValue => {
     setSelectedOption(itemValue);
     setOcation(itemValue);
@@ -182,26 +113,38 @@ uploadTask.on('state_changed',
         />
           
           {/*Location*/}
-          <Text style={styles.Label}> Location</Text>
-         <TextInput placeholder='Input location of event or click to get location' 
-       placeholderTextColor="white"
-        value={location} 
-        onChangeText={text => {setLocation(); }} 
-        style={styles.input}
-        
-        />
-            {errorMsg ? (
-        <Text >{errorMsg}</Text>
-      ) : location ? (
-        <>
-          <Text style={styles.locate}>Latitude: {location.coords.latitude}</Text>
-          <Text style={styles.locate}>Longitude: {location.coords.longitude}</Text>
-          <Text style={styles.locate}>Address: {address?.city}, {address?.region} {address?.postalCode}</Text>
-            <Button title="Remove Location" onPress={handleGetLocation} />
-        </>
-      ) : (
-         <Button title="Get Location" onPress={handleGetLocation} />
-      )}
+
+        {errorMsg ? (
+  <Text>{errorMsg}</Text>
+) : location && !useManualLocation ? (
+  <>
+    <Text style={styles.locate}>Latitude: {location.coords.latitude}</Text>
+    <Text style={styles.locate}>Longitude: {location.coords.longitude}</Text>
+    <Text style={styles.locate}>Address: {address?.country} {address?.city} {address?.subregion} {address?.street}</Text>
+    <Button title="Remove Location" onPress={() => setUseManualLocation(true)} />
+  </>
+) : (
+  <>
+    <Text style={styles.Label}> Location</Text>
+    <TextInput
+      placeholder="Input location of event or click to get location"
+      placeholderTextColor="white"
+      value={manualLocation}
+      onChangeText={(text) => {
+        setManualLocation(text);
+        setUseManualLocation(true);
+      }}
+      style={styles.input}
+    />
+    <Button
+      title="Get Location"
+      onPress={() => {
+        setUseManualLocation(false);
+        handleGetLocation();
+      }}
+    />
+  </>
+)}
 
          <Text style={styles.Label}>Category:</Text>
          <View style={styles.box}>
@@ -216,13 +159,18 @@ uploadTask.on('state_changed',
       </View>
       {/*<Text>Selected option: {selectedOption}</Text>
       <Text>Location: {ocation}</Text>*/}
-      
-        {/*Submit*/}
-        <TouchableOpacity onPress={() => {handleData();}}  ////disabled= {per !==null && per<100} 
+          {isLoading ? (
+        <Text style={styles.buttonText}>Saving, please wait</Text>
+      ) : isSuccess ? (
+        <Text style={styles.buttonText}>Saved successfully!</Text>
+      ):(
+        <></>
+        )}
+         <TouchableOpacity onPress={() => {handleData();}}  ////disabled= {per !==null && per<100} 
         style={styles.button}>
           <Text style={styles.buttonText}>POST</Text>
-        </TouchableOpacity> 
-   
+        </TouchableOpacity>
+       
    
     </KeyboardAvoidingView>
       

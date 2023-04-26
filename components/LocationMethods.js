@@ -14,4 +14,3 @@ export const getCurrentLocation = async () => {
     return null;
   }
 };
-s

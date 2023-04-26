@@ -46,12 +46,24 @@ const HomeScreen = ({ navigation }) => {
     
     if (selectedOption === 'All' || item.selectedOption === selectedOption) {
       return (
-        <View key={item.id} >
+        <View key={item.id} style={{ flex: 0 }}>
+        <View>
+        <View style={styles.topgrid}>
         <View style={styles.brofile}>
          <Image source={{ uri: item.hoto }} style={styles.profilePicture} />
           <Text style={styles.title}>{item.username}</Text>
           </View>
           <Text style={styles.title}>{item.selectedOption}</Text>
+          </View>
+           <View style={styles.location} >
+           {item.locationData.region&& item.locationData.subregion ?
+          (<Text style={styles.title}>{item.locationData.region},{item.locationData.subregion}</Text>)
+          :
+          (<Text style={styles.title}>{item.locationData}</Text>)
+          }
+
+          </View>
+          </View>
           <Image source={{ uri: item.photo }} style={{ width: 450, height: 480 , }} />
           <View style={styles.info}>
             <Text style={styles.title1}>{item.topic}</Text>
@@ -65,7 +77,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={['rgba(66, 12, 88, 1.0)', 'rgba(66, 12, 88, 1)', 'rgba(33, 17, 52, 0.6)', 'rgba(89, 70, 119, 1)', 'rgba(33, 17, 52, 1.0)',]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container} behaviour="padding">
+    <LinearGradient colors={['rgba(66, 12, 88, 1.0)', 'rgba(66, 12, 88, 1)', 'rgba(33, 17, 52, 0.8)', 'rgba(89, 70, 119, 1)', 'rgba(33, 17, 52, 1.0)',]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container} behaviour="padding">
       <KeyboardAvoidingView >
         <View style={styles.event}>
         <TouchableOpacity style={[styles.events ,selectedOption==="All" && styles.selectedOption]} onPress={() => handleEventSelection('All')}>
@@ -182,6 +194,11 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     gap: 10,
     alignitems: 'center',
+  },
+  location:{
+    alignItems:'flex-end'
+  },
+  topgrid:{
+    marginBottom:-30
   }
-
 });
