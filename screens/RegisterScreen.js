@@ -9,20 +9,7 @@ const RegisterScreen = ({navigation}) => {
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
  
-  const handleSignUp = () => {
-    const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-    .then(userCredentials => {
-      const user = userCredentials.user;
-      console.log(user.email);
-      })
-      .catch(error =>  alert(error.message))
-        navigation.navigate("Login")
-  } 
-
-    const Login = () =>{
-      navigation.navigate("Login")
-    }
+ 
   
    return (
     

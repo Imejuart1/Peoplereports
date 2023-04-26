@@ -12,27 +12,8 @@ const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
 
-
  const dispatch = useDispatch();
-    {/*  useEffect(() => {
 
-    const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
- if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/firebase.User
-    const uid = user.uid;
-     navigation.navigate("RegisterScreen", {uid})
-    
-    // ...
-  } else {
-    console.log("User is signed out")
-
-  }
-});
-   
-  }, []
-)*/}
 
     const handleLogin = () => {
       const auth = getAuth();
@@ -69,7 +50,7 @@ onAuthStateChanged(auth, (user) => {
       </View>
 
       <View>
-        <TextInput placeholder='Username/Email' 
+        <TextInput placeholder='Email' 
         placeholderTextColor="white"
         value={email} 
         onChangeText={text => setEmail(text)} 

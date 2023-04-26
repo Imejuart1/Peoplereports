@@ -1,9 +1,9 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity,Button, Image, View, Platform } from 'react-native'
 import {Picker} from '@react-native-picker/picker'
 import React, { useEffect, useState } from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute ,useFocusEffect } from '@react-navigation/native';
 import { db, } from '../firebase';
-import { collection, Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
+import { collection, Timestamp, doc, serverTimestamp, setDoc , addDoc,getFirestore} from 'firebase/firestore';
 import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import FooterNav from '../components/FooterNav';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,8 +11,24 @@ import { useSelector } from 'react-redux';
 import { selectUid , selectAmail} from '../components/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
 
 const PostScreen2 = ({navigation}) => {
+
+    const [username, setUsername] = useState('');
+     const [hoto, setHoto] = useState("");
+  useFocusEffect(
+React.useCallback(() => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    //setEmail(user.email);
+    setUsername(user.displayName);
+    setHoto(user.photoURL);
+    console.log(hoto)
+  }
+}, [])
+);
 
    //location code
    const [isClicked, setIsClicked] = useState(false);
@@ -114,7 +130,10 @@ uploadTask.on('state_changed',
   //upload other post details to the database
   const handleData = async (e) => { 
    try{
-     await setDoc(doc(db, "cities" ,uid),{
+     await addDoc(collection(db, "cities" ),{
+      id: uid,
+      hoto,
+      username,
       email,
       topic,
       describe,

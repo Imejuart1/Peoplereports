@@ -48,8 +48,6 @@ try{
 }, []);
 
    return (
-    
-    
          <LinearGradient colors={['#420C58',  '#211134', '#594677']} 
 
          style={styles.container} >
@@ -73,15 +71,15 @@ try{
          <Text style={styles.input}>Username: {username}</Text>
        </View>
       <View>
-          {userData ?
+          {/*{userData ?
             <Text style={styles.input}>FullName: {userData.fullName}</Text>
             :
             <Text style={styles.input} >FullName: Loading</Text>
-            }
+            }*/}
        </View>
 
       <View>
-        <TouchableOpacity  style={styles.button} onPress={() => navigation.navigate("Uupdate1", {item1: email, item2:username, item3:userData.fullName, item4:photo})}>
+        <TouchableOpacity  style={styles.button} onPress={() => navigation.navigate("Uupdate1", {item1: email, item2:username,  item4:photo})}>
           <Text style={styles.buttonText}>Edit</Text>
         </TouchableOpacity> 
        </View>
@@ -111,8 +109,6 @@ contain:{
 input:{
    color:"white",
     margin: 12,
-    //borderWidth: 1,
-    borderBottomWidth:1,
     borderColor:"white",
     fontWeight: "500",
   fontSize: 20,

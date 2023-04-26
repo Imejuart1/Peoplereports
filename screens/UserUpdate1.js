@@ -8,20 +8,20 @@ import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux';
 import { selectUid , selectAmail} from '../components/authSlice';
 import { db, } from '../firebase';
-import { collection, Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, Timestamp, doc, serverTimestamp, setDoc , getFirestore} from 'firebase/firestore';
 
 
 const UserUpdate = ({navigation}) => {
     const route = useRoute();
-      const { item1, item2 ,item3, item4} = route.params;
+      const { item1, item2 , item4} = route.params;
   const [email, setEmail] = useState(item1);
   const[error, setError] = useState("")
   const[success, setSuccess] = useState("")
   const [password,  setPassword] = useState("")
   const [username, setUsername] = useState(item2);
-  const [fullName, setFullName] = useState(item3);
   const [photo, setPhoto] = useState('');
   const [hoto, setHoto] = useState(item4);
+   const [picture, setPicture] = useState(item4);
   const [downloadURL, setDownloadURL] = useState(null);
   const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -80,6 +80,8 @@ uploadTask.on('state_changed',
     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
       console.log('File available at', downloadURL);
      setDownloadURL(downloadURL);
+     setHoto(downloadURL);
+     set
     });
   }
 );
@@ -89,7 +91,7 @@ uploadTask.on('state_changed',
   }
 },[photo] )
 
-const updateEmailAndPassword = async (uid, newEmail, newPassword, displayName, photoURL, fullName) => {
+const updateEmailAndPassword = async (uid, newEmail, newPassword, displayName, photoURL) => {
   try {
     const user = await auth.currentUser;
     
@@ -98,7 +100,7 @@ const updateEmailAndPassword = async (uid, newEmail, newPassword, displayName, p
       await updateEmail(user, newEmail);
       await updatePassword(user, newPassword);
       console.log('Email and password updated successfully');
-       await updateProfile(user, { displayName, photoURL, fullName})  
+       await updateProfile(user, { displayName, photoURL})  
       console.log("photo"+ photoURL)
       setSuccess(null);
     }
@@ -107,15 +109,22 @@ const updateEmailAndPassword = async (uid, newEmail, newPassword, displayName, p
   }
 };
 
-const updateProfileInfo = async (e) => {
-       try{
-     await setDoc(doc(db, "users" ,uid),{
-      fullName, downloadURL
-     })
-    } catch(err) {
-      console.log(err);
-    }  
-};    
+const handleData = async (e) => { 
+  const q = await query(collection(db, "cities"), where("id", "==", uid));
+  const querySnapshot = await getDocs(q);
+
+  for (const doc of querySnapshot.docs) {
+    const newData = {
+      ...doc.data(),
+      hoto,
+      username,
+    };
+    await setDoc(doc.ref, newData);
+  }
+};
+
+
+
 
   const handleSave = async () => {
       if (prog !== 100 && hoto == null) {
@@ -125,8 +134,8 @@ const updateProfileInfo = async (e) => {
 
     setLoading(true);
     try {
-      await updateEmailAndPassword(uid, email, password, username, downloadURL, fullName);
-      await updateProfileInfo();
+      await updateEmailAndPassword(uid, email, password, username, downloadURL);
+      await handleData();
       // handle success
     } catch (error) {
       // handle error
@@ -154,7 +163,7 @@ const updateProfileInfo = async (e) => {
       ) : (
          <Image
           style={styles.profilePicture}
-          source={{ uri: hoto }}   
+          source={{ uri: picture }}   
         />
       )}
       {/*---------------------------*/}
@@ -168,16 +177,6 @@ const updateProfileInfo = async (e) => {
         placeholderTextColor="white"
         value={username} 
         onChangeText={text => setUsername(text)} 
-        style={styles.input}
-         
-        />
-       </View>
-
-       <View>
-        <TextInput placeholder='Full Name' 
-        placeholderTextColor="white"
-        value={fullName} 
-        onChangeText={text => setFullName(text)} 
         style={styles.input}
          
         />

@@ -12,9 +12,7 @@ import { getAuth, getUser, onAuthStateChanged } from 'firebase/auth';
 const HomeScreen = ({ navigation }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOption, setSelectedOption] = useState('All');
-   const [selectedEvent, setSelectedEvent] = useState('All');
-
+  const [selectedOption, setSelectedOption] = useState('All')
 
   const uid = useSelector(selectUid);
   const email = useSelector(selectAmail);
@@ -49,7 +47,10 @@ const HomeScreen = ({ navigation }) => {
     if (selectedOption === 'All' || item.selectedOption === selectedOption) {
       return (
         <View key={item.id} >
-          <Text style={styles.title}>{item.email}</Text>
+        <View style={styles.brofile}>
+         <Image source={{ uri: item.hoto }} style={styles.profilePicture} />
+          <Text style={styles.title}>{item.username}</Text>
+          </View>
           <Text style={styles.title}>{item.selectedOption}</Text>
           <Image source={{ uri: item.photo }} style={{ width: 450, height: 480 , }} />
           <View style={styles.info}>
@@ -170,5 +171,17 @@ const styles = StyleSheet.create({
      borderRadius:10
    
   },
+    profilePicture: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+  
+  },
+  brofile:{
+    display:"flex",
+    flexDirection:"row",
+    gap: 10,
+    alignitems: 'center',
+  }
 
 });
