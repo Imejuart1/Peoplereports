@@ -2,19 +2,16 @@ import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, Vi
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react'
 import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { auth } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { setUid, setAmail} from '../components/authSlice';
-
+import { setLoggedIn } from  '../components/authSlice';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
+  
 
  const dispatch = useDispatch();
-
-
     const handleLogin = () => {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, email, password)
@@ -26,6 +23,7 @@ const LoginScreen = ({navigation}) => {
     const uid = user.uid;
     dispatch(setUid({ uid, email }));
     dispatch(setAmail(user.email));
+     dispatch(setLoggedIn(true));
     navigation.navigate('Home');
     // ...
   })

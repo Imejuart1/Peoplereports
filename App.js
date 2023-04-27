@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged, signOut} from "firebase/auth";
+import { getAuth,  signOut} from "firebase/auth";
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -15,8 +15,8 @@ import UserUpdate1 from './screens/UserUpdate1';
 import FooterNav from './components/FooterNav';
 import Discovers from './screens/Discover';
 import Search from './screens/Search';
-import { Provider } from 'react-redux';
-import store from './components/store';
+import { useSelector } from "react-redux";
+import {selectLoggedIn} from './components/authSlice';
 
 const StartStack = createNativeStackNavigator();
 const EndStack = createNativeStackNavigator();
@@ -26,10 +26,10 @@ const Tab = createBottomTabNavigator();
  const handleLogout = () => {
     signOut(auth);
   };
-function HomeStackScreen() {
+function HomeStackScreen({}) {
   return (
     <StartStack.Navigator>
-<StartStack.Screen   options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+      <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white',  headerRight: () => (
               <Button
                 onPress={handleLogout}
@@ -40,72 +40,38 @@ function HomeStackScreen() {
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post" component={PostScreen} />
         <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
-       <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate" component={UserUpdate} />
-                <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate1" component={UserUpdate1} />
-       <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
-       <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
-       </StartStack.Navigator>
+        <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
+        <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
+    </StartStack.Navigator>
   );
 }
 
-
-
 export default function App() {
+     
+  const isLoggedIn = useSelector(selectLoggedIn);
 
- const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-      useEffect(() => {
-
-    const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
- if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/firebase.User
-    setIsLoggedIn(true);
- 
-    // ...
-  } else {
-    console.log("User is signed out")
-    setIsLoggedIn(false);
-  }
-});
-  }, []
-)
- const [isNewUser, setIsNewUser] = useState(false);
- const handleRegister = () => {
-  setIsNewUser(true);
-};
   return (
-     <Provider store={store}>
-           <NavigationContainer>
-          
-
-      {isLoggedIn ? (
-        <>
-        <Tab.Navigator tabBar={(props) => <FooterNav {...props} />}>
-        <Tab.Screen name="Home" options={{headerShown: false}} component={HomeStackScreen} />
-        </Tab.Navigator>
-      
-      </>
-      ) : (
-        <StartStack.Navigator>
-        {!isLoggedIn &&<StartStack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />}
-         {!isLoggedIn && <StartStack.Screen options={{headerShown: false }} initialParams={{ handleRegister }} name="RegisterScreen" component={RegisterScreen}/>}
-        
-       </StartStack.Navigator>
-       
-      )}
-      
-   
-    
-    </NavigationContainer>
-    </Provider>
-  
-
-  )
+ 
+      <NavigationContainer>
+        {isLoggedIn ? (
+          <Tab.Navigator tabBar={(props) => <FooterNav {...props} />}>
+         <Tab.Screen name="Home" options={{headerShown: false}} component={() => <HomeStackScreen />} />
+          </Tab.Navigator>
+        ) : (
+          <StartStack.Navigator>
+          <StartStack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
+            <StartStack.Screen options={{headerShown: false }} s name="RegisterScreen" component={RegisterScreen}/>
+          </StartStack.Navigator>
+        )}
+      </NavigationContainer>
+ 
+  );
 }
+
 
 const styles = StyleSheet.create({
   container: {
