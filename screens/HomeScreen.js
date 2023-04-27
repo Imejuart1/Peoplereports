@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react'
 import FooterNav from '../components/FooterNav'
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector } from 'react-redux';
-import { selectUid, selectAmail } from '../components/authSlice';
+import { selectUid, selectAmail, selectLoggedIn } from '../components/authSlice';
 import { doc, getDoc } from "firebase/firestore";
-import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
-import { getAuth, getUser, onAuthStateChanged } from 'firebase/auth';
+import { formatDistanceToNow } from 'date-fns';
 
 const HomeScreen = ({ navigation }) => {
   const [cities, setCities] = useState([]);
@@ -17,17 +17,20 @@ const HomeScreen = ({ navigation }) => {
   const uid = useSelector(selectUid);
   const email = useSelector(selectAmail);
   console.log(uid);
-  console.log(email);
+  
 
   useEffect(() => {
-    const citiesRef = collection(db, "cities");
+    const citiesRef = query(collection(db, "cities"), orderBy("timeStamp", "desc"));;
 
     const unsubscribe = onSnapshot(citiesRef, (snapshot) => {
       const newCities = [];
       snapshot.forEach(async (doc) => {
         const city = doc.data();
         const id = doc.id;
-        newCities.push({ ...city, id });
+         // Calculate the time elapsed since the post was created
+      const timeElapsed = formatDistanceToNow(city.timeStamp.toDate(), { addSuffix: true });
+      
+        newCities.push({ ...city, id, timeElapsed });
       });
       setCities(newCities);
       setLoading(false);
@@ -61,13 +64,13 @@ const HomeScreen = ({ navigation }) => {
           :
           (<Text style={styles.title}>{item.locationData}</Text>)
           }
-
           </View>
           </View>
           <Image source={{ uri: item.photo }} style={{ width: 450, height: 480 , }} />
+          <Text style={styles.time}>{item.timeElapsed}</Text>
           <View style={styles.info}>
             <Text style={styles.title1}>{item.topic}</Text>
-            <Text style={styles.description}>{item.describe}</Text>
+            <Text style={styles.description}>{item.describe}</Text> 
           </View>
         </View>
       );
@@ -77,7 +80,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient colors={['rgba(66, 12, 88, 1.0)', 'rgba(66, 12, 88, 1)', 'rgba(33, 17, 52, 0.8)', 'rgba(89, 70, 119, 1)', 'rgba(33, 17, 52, 1.0)',]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container} behaviour="padding">
+   <LinearGradient colors={['#420C58',  '#211134', '#594677']}  style={styles.container} behaviour="padding">
       <KeyboardAvoidingView >
         <View style={styles.event}>
         <TouchableOpacity style={[styles.events ,selectedOption==="All" && styles.selectedOption]} onPress={() => handleEventSelection('All')}>
@@ -156,6 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 2,
+    
     color: "#D1D0D0"
   },
   description: {
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   info:{
-    marginTop:7,
+    marginTop:-10,
     marginBottom:10,
   },
   selectedOption:{
@@ -200,5 +204,10 @@ const styles = StyleSheet.create({
   },
   topgrid:{
     marginBottom:-30
-  }
+  },
+  time:{
+    color: "#D1D0D0",
+    fontWeight:"bold",
+    alignSelf:"flex-end"
+  },
 });

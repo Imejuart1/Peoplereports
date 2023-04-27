@@ -13,6 +13,8 @@ import * as Location from 'expo-location';
 import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
 import useLocation from '../components/Location';
 import uploadImage from '../components/Expoupload'
+import { presentNotificationAsync } from 'expo-notifications';
+
 
 
 const PostScreen2 = ({navigation}) => {
@@ -70,8 +72,20 @@ useEffect(() => {
     setIsLoading(true);
      await addDoc(collection(db, "cities" ),{
       id: uid,hoto,username,email,topic,describe,photo,locationData,selectedOption,timeStamp: serverTimestamp(),
-      
      })
+       
+    await presentNotificationAsync({
+      title: 'Saved Successfully',
+      body: username + ' posted succesfully',
+      ios: {
+        sound: true,
+      },
+      android: {
+        channelId: 'notifications',
+        sound: true,
+        vibrate: true,
+      },
+    });
        setIsLoading(false);
       setIsSuccess(true);
     } catch(err) {

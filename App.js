@@ -23,10 +23,18 @@ const EndStack = createNativeStackNavigator();
 const auth = getAuth();
 const Tab = createBottomTabNavigator();
 
- const handleLogout = () => {
-    signOut(auth);
-  };
+const handleLogout = async () => {
+  try {
+    await signOut(auth);
+    // Redirect to login page after logout
+    navigation.navigate('Login');
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 function HomeStackScreen({}) {
+
   return (
     <StartStack.Navigator>
       <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,

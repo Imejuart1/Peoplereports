@@ -3,13 +3,33 @@ import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { auth } from '../firebase';
 
 const RegisterScreen = ({navigation}) => {
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
- 
- 
+
+  const handleSignUp = () => {
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+          alert("Registration successful!");
+      })
+      .catch((error) => {
+        alert(error.message)
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        
+      });
+  };
+
+     const Login = () =>{
+      navigation.navigate("Login")
+    }
+
   
    return (
     
