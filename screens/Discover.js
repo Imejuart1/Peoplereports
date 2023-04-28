@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Permissions from 'expo-permissions';
 
-export default function VideoRecorder() {
+export default function Discover() {
   const camera = useRef(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);

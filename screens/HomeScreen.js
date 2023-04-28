@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity,KeyboardAvoidingView, StyleSheet, Text, View, Image, FlatList } from 'react-native'
+import { ScrollView, Button, TouchableOpacity,KeyboardAvoidingView, StyleSheet, Text, View, Image, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import FooterNav from '../components/FooterNav'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,6 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { getFirestore, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 import { formatDistanceToNow } from 'date-fns';
+
 
 const HomeScreen = ({ navigation }) => {
   const [cities, setCities] = useState([]);
@@ -83,6 +84,7 @@ const HomeScreen = ({ navigation }) => {
    <LinearGradient colors={['#420C58',  '#211134', '#594677']}  style={styles.container} behaviour="padding">
       <KeyboardAvoidingView >
         <View style={styles.event}>
+       
         <TouchableOpacity style={[styles.events ,selectedOption==="All" && styles.selectedOption]} onPress={() => handleEventSelection('All')}>
             <Text style={styles.eventid}>All</Text>
           </TouchableOpacity>
@@ -109,6 +111,8 @@ const HomeScreen = ({ navigation }) => {
             keyExtractor={(item) => item.id}
           />
         )}
+
+      
       </KeyboardAvoidingView>
       
     </LinearGradient>

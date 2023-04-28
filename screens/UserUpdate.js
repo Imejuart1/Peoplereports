@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { KeyboardAvoidingView, Button,  StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
@@ -8,6 +8,8 @@ import { selectUid , selectAmail} from '../components/authSlice';
 import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db } from '../firebase';
 import { getFirestore, collection, onSnapshot, doc, getDoc } from "firebase/firestore";
+import { setLoggedIn } from  '../components/authSlice';
+import { useDispatch } from 'react-redux';
 
 const UserUpdate = ({navigation}) => {
   
@@ -20,7 +22,15 @@ const UserUpdate = ({navigation}) => {
   const [fullName, setFullName] = useState('');
   const [photo, setPhoto] = useState("");
     const uid = useSelector(selectUid);
+     const dispatch = useDispatch();
+    //logout funcction
 
+
+     const handleLogout = ({ss}) => {
+  dispatch(setLoggedIn(false));
+ }
+
+ //get user details
 useFocusEffect(
 React.useCallback(() => {
   const auth = getAuth();
@@ -84,6 +94,9 @@ try{
         </TouchableOpacity> 
        </View>
       </View>
+    <TouchableOpacity  style={styles.button} onPress={handleLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity> 
      </LinearGradient>
 
      

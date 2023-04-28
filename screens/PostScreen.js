@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FlatList, StyleSheet, View, Text, TouchableOpacity, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Camera } from 'expo-camera';
@@ -9,7 +9,7 @@ import * as Permissions from 'expo-permissions';
 import * as MediaLibrary from 'expo-media-library';
 
 export default function PostScreen({navigation}) {
-     const [isRecording, setIsRecording] = useState(false);
+ 
   const cameraRef = useRef(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
@@ -17,22 +17,7 @@ export default function PostScreen({navigation}) {
    const [photos, setPhotos] = useState([]);
    const [selectedImage, setSelectedImage] = useState(null);
 
-const handleRecord = async () => {
-    if (cameraRef.current) {
-      try {
-        if (!isRecording) {
-          await cameraRef.current.recordAsync();
-          setIsRecording(true);
-        } else {
-          setIsRecording(false);
-          const video = await cameraRef.current.stopRecording();
-          console.log(video);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+
   //send the picture to the next screen 
    const handlePicture = ()=>{
          navigation.navigate("Post2", photo);

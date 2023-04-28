@@ -23,35 +23,22 @@ const EndStack = createNativeStackNavigator();
 const auth = getAuth();
 const Tab = createBottomTabNavigator();
 
-const handleLogout = async () => {
-  try {
-    await signOut(auth);
-    // Redirect to login page after logout
-    navigation.navigate('Login');
-  } catch (error) {
-    console.log(error.message);
-  }
-};
+
 
 function HomeStackScreen({}) {
-
+  
   return (
     <StartStack.Navigator>
       <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
-         headerTintColor: 'white',  headerRight: () => (
-              <Button
-                onPress={handleLogout}
-                title="Logout"
-              />
-            )})} name="Home" component={HomeScreen} />
-        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white',})} name="Home" component={HomeScreen} />
+        <StartStack.Screen options={({ navigation }) => ({headerTitle:"Create Post", headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post" component={PostScreen} />
-        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+        <StartStack.Screen options={({ navigation }) => ({headerTitle:"Post" ,headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Post2" component={PostScreen2} />
-        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+        <StartStack.Screen options={({ navigation }) => ({headerTitle:"Profile", headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate" component={UserUpdate} />
-        <StartStack.Screen options={({ navigation }) => ({headerStyle: { backgroundColor: '#420C58'},headerShown: true,
-         headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate1" component={UserUpdate1} />
+        <StartStack.Screen options={({ navigation }) => ({headerTitle:" Edit Profile " ,headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',})} name="Uupdate1" component={UserUpdate1} />
         <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
         <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
     </StartStack.Navigator>
