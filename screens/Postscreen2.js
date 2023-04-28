@@ -53,7 +53,7 @@ const PostScreen2 = ({navigation}) => {
    const [topic, setTopic] = useState("")
    const [describe,setDescription] = useState("")
    const [category,setCategory] = useState("")
-   s
+   
 //intializing firebase storage for images 
 const storage = getStorage();
 //upload images to the database
