@@ -37,6 +37,7 @@ React.useCallback(() => {
     setEmail(user.email);
     setUsername(user.displayName);
     setPhoto(user.photoURL);
+    console.log(user.photoURL)
   }
 }, [])
 );

@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { getAuth,  signOut} from "firebase/auth";
 import { StyleSheet, Text, View, Button } from 'react-native';
@@ -55,6 +55,7 @@ export default function App() {
   return (
  
       <NavigationContainer>
+       <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
         {isLoggedIn ? (
           <Tab.Navigator tabBar={(props) => <FooterNav {...props} />}>
          <Tab.Screen name="Home" options={{headerShown: false}} component={() => <HomeStackScreen />} />

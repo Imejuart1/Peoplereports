@@ -13,6 +13,9 @@
     },
     "android": {
       "package": "com.imejuart.Peoplereports"
+    },
+    "ios": {
+      "bundleIdentifier": "com.imejuart.Peoplereports"
     }
   },
   "name": "Peoplereports"

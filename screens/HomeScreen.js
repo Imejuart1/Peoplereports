@@ -51,8 +51,19 @@ const HomeScreen = ({ navigation }) => {
         <View>
         <View style={styles.topgrid}>
         <View style={styles.brofile}>
-         <Image source={{ uri: item.hoto }} style={styles.profilePicture} />
-          <Text style={styles.title}>{item.username}</Text>
+         
+         {item.username ?
+        <>
+          <Image source={{ uri: item.hoto }} style={styles.profilePicture} />
+            <Text style={styles.title}>{item.username}</Text>
+            </>
+         :
+         <>
+           <Text style={styles.title}>{item.email}</Text>
+           
+           </>
+         }
+          
           </View>
           <Text style={styles.title}>{item.selectedOption}</Text>
           </View>

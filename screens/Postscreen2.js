@@ -76,7 +76,7 @@ useEffect(() => {
        
     await presentNotificationAsync({
       title: 'Saved Successfully',
-      body: username + ' posted succesfully',
+      body:  (username || email)  + ' posted succesfully',
       ios: {
         sound: true,
       },

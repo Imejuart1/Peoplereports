@@ -167,7 +167,7 @@ const handleData = async (e) => {
     ) : picture ? (
     <Image source={{ uri: picture }} style={styles.profilePicture} />
     ) : (
-   <Image source={{ uri: "https://example.com/default-image.jpg"}} style={styles.profilePicture} />
+   <Image source={{ uri: 'https://i.imgur.com/SYVJvjA.png' }} style={styles.profilePicture} />
     )}
       {/*---------------------------*/}
       </TouchableOpacity>
