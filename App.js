@@ -15,6 +15,7 @@ import UserUpdate1 from './screens/UserUpdate1';
 import FooterNav from './components/FooterNav';
 import Discovers from './screens/Discover';
 import Search from './screens/Search';
+import Recentpost from './screens/Recentpost';
 import { useSelector } from "react-redux";
 import {selectLoggedIn} from './components/authSlice';
 
@@ -39,6 +40,8 @@ function HomeStackScreen({}) {
          headerTintColor: 'white', headerTitleAlign: 'center',headerTitleStyle: { fontSize: 24 },})} name="Uupdate" component={UserUpdate} />
         <StartStack.Screen options={({ navigation }) => ({headerTitle:" Edit Profile " ,headerStyle: { backgroundColor: '#420C58'},headerShown: true,
          headerTintColor: 'white', headerTitleAlign: 'center',})} name="Uupdate1" component={UserUpdate1} />
+           <StartStack.Screen options={({ navigation }) => ({headerTitle:"  " ,headerStyle: { backgroundColor: '#420C58'},headerShown: true,
+         headerTintColor: 'white', headerTitleAlign: 'center',})} name="recent" component={Recentpost} />
         <StartStack.Screen options={{headerShown: false}} name="Search" component={Search} />
         <StartStack.Screen options={{headerShown: false}} name="Discover" component={Discovers} />
     </StartStack.Navigator>

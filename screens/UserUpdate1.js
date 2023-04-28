@@ -14,6 +14,7 @@ import { collection, query, where, getDocs, updateDoc, Timestamp, doc, serverTim
 const UserUpdate = ({navigation}) => {
     const route = useRoute();
       const { item1, item2 , item4} = route.params;
+         const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState(item1);
   const[error, setError] = useState("")
   const[success, setSuccess] = useState("")
@@ -125,14 +126,15 @@ const handleData = async (e) => {
 
 
 
-
+ const [isSuccess, setIsSuccess] = useState(false);
   const handleSave = async () => {
       if (prog !== 100 && hoto == null) {
     setError("wait for image upload to be 100%");
     setSuccess(null)
   }
-
-    setLoading(true);
+  setLoading(true);
+    setIsLoading(true);
+    
     try {
       await updateEmailAndPassword(uid, email, password, username, downloadURL);
       await handleData();
@@ -140,6 +142,8 @@ const handleData = async (e) => {
     } catch (error) {
       // handle error
     } finally {
+      setIsSuccess(true);
+      setIsLoading(false);
       setLoading(false);
       setError(null)
       setSuccess("Succesfully updated")
@@ -158,14 +162,13 @@ const handleData = async (e) => {
     <View style={styles.profilePictureContainer}>
          <Text style={styles.upoad}>{file}</Text>
       <TouchableOpacity  style={styles.profiile} onPress={pickImage}>
-      {photo ? (
-           <Image source={{ uri: photo }} style={styles.profilePicture}></Image>
-      ) : (
-         <Image
-          style={styles.profilePicture}
-          source={{ uri: picture }}   
-        />
-      )}
+    {photo ? (
+     <Image source={{ uri: photo }} style={styles.profilePicture} />
+    ) : picture ? (
+    <Image source={{ uri: picture }} style={styles.profilePicture} />
+    ) : (
+   <Image source={{ uri: "https://example.com/default-image.jpg"}} style={styles.profilePicture} />
+    )}
       {/*---------------------------*/}
       </TouchableOpacity>
        {/*<Ionicons style={styles.imageIcon} name="image-outline" size={32} color="white" onPress={pickImage}/>*/}
@@ -201,7 +204,14 @@ const handleData = async (e) => {
         />
         </View>
         <Text style={styles.upload}>{error} </Text>
-        <Text style={styles.upoad}>{success}</Text>
+         {isLoading ? (
+        <Text style={styles.buttonText}>Saving, please wait</Text>
+      ) : isSuccess ? (
+        <Text style={styles.buttonText}>Saved successfully!</Text>
+      ):(
+        <></>
+        )}
+       
       <View>
         <TouchableOpacity  style={styles.button} onPress={handleSave} disabled={loading} >
         <Text style={styles.buttonText}>Save</Text>

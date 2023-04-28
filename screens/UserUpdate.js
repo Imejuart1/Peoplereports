@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Button,  StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { KeyboardAvoidingView, FlatList,  StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
@@ -7,23 +7,21 @@ import { useSelector } from 'react-redux';
 import { selectUid , selectAmail} from '../components/authSlice';
 import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db } from '../firebase';
-import { getFirestore, collection, onSnapshot, doc, getDoc } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, doc, getDoc,query, where, getDocs, } from "firebase/firestore";
 import { setLoggedIn } from  '../components/authSlice';
 import { useDispatch } from 'react-redux';
+import { Dimensions } from 'react-native';
+
 
 const UserUpdate = ({navigation}) => {
-  
-   const [cities, setCities] = useState([]);
     const [userData, setUserData] = useState(null);
-   const [profile, setProfile] = useState(null);
    const [email, setEmail] = useState("")
-  const [password,  setPassword] = useState("")
   const [username, setUsername] = useState('');
-  const [fullName, setFullName] = useState('');
   const [photo, setPhoto] = useState("");
     const uid = useSelector(selectUid);
      const dispatch = useDispatch();
     //logout funcction
+
 
 
      const handleLogout = ({ss}) => {
@@ -57,10 +55,9 @@ try{
  fetchUserData();
 }, []);
 
-   return (
-         <LinearGradient colors={['#420C58',  '#211134', '#594677']} 
 
-         style={styles.container} >
+   return (
+         <LinearGradient colors={['#420C58',  '#211134', '#594677']}  style={styles.container} >
       <View style={styles.contain}>
     <View style={styles.profilePictureContainer}>
     {photo ? (
@@ -80,14 +77,11 @@ try{
        <View>
          <Text style={styles.input}>Username: {username}</Text>
        </View>
-      <View>
-          {/*{userData ?
-            <Text style={styles.input}>FullName: {userData.fullName}</Text>
-            :
-            <Text style={styles.input} >FullName: Loading</Text>
-            }*/}
+            <View>
+        <TouchableOpacity  style={styles.button} onPress={() => navigation.navigate("recent")}>
+          <Text style={styles.buttonText}>Recentpost</Text>
+        </TouchableOpacity> 
        </View>
-
       <View>
         <TouchableOpacity  style={styles.button} onPress={() => navigation.navigate("Uupdate1", {item1: email, item2:username,  item4:photo})}>
           <Text style={styles.buttonText}>Edit</Text>
@@ -96,10 +90,8 @@ try{
       </View>
     <TouchableOpacity  style={styles.button} onPress={handleLogout}>
           <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity> 
-     </LinearGradient>
-
-     
+        </TouchableOpacity>     
+     </LinearGradient>    
     
   )
 }
@@ -128,7 +120,7 @@ input:{
 paddingBottom:20,
 },
 button:{
-  marginTop:60,
+  marginTop:20,
   backgroundColor: '#594677',
   width:"100%",
   padding: 15,

@@ -43,10 +43,7 @@ const HomeScreen = ({ navigation }) => {
     setSelectedOption(option);
   };
 
-
-
-
-  const renderItem = ({ item }) => {
+ const renderItem = ({ item }) => {
     
     if (selectedOption === 'All' || item.selectedOption === selectedOption) {
       return (
@@ -120,6 +117,8 @@ const HomeScreen = ({ navigation }) => {
 }
 
 export default HomeScreen
+
+
 
 const styles = StyleSheet.create({
   container: {
