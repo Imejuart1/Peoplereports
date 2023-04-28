@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FlatList, StyleSheet, View, Text, TouchableOpacity, Image, Platform } from 'react-native';
+import {Dimensions , FlatList, StyleSheet, View, Text, TouchableOpacity, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
@@ -131,22 +131,24 @@ export default function PostScreen({navigation}) {
   );
 }
 
+const screenWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     backgroundColor: '#000',
     alignItems: 'center',
-    
+      width: screenWidth,
   },
   camera: {
-  width:450,
-    height:600,
-   marginTop:10
+  width:     screenWidth/450,
+    height:  screenWidth/600,
+   marginTop: screenWidth/10
   },
   photo: {
-   width:450,
-    height:750,
-    marginTop:10
+   width: screenWidth/450,
+    height: screenWidth/750,
+    marginTop: 10
   },
   photos:{
      width: 120,
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 26,
     textAlign: 'center',
-    marginRight: 10,
+    marginRight: screenWidth/10,
   },
    selectedImage: {
   
@@ -183,9 +185,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
     selectedIage: {
-      width: 450,
-    height: 600,
-    marginTop:10
+      width: screenWidth/450,
+    height: screenWidth/600,
+    marginTop:screenWidth/10
     
   },
   test:{
