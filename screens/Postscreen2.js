@@ -4,13 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute ,useFocusEffect } from '@react-navigation/native';
 import { db, } from '../firebase';
 import { collection, Timestamp, doc, serverTimestamp, setDoc , addDoc,getFirestore} from 'firebase/firestore';
-import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getStorage, } from "firebase/storage";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelector } from 'react-redux';
 import { selectUid , selectAmail} from '../components/authSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Location from 'expo-location';
-import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
+import { getAuth,} from "firebase/auth";
 import useLocation from '../components/Location';
 import uploadImage from '../components/Expoupload'
 import { presentNotificationAsync } from 'expo-notifications';
@@ -22,8 +20,8 @@ const PostScreen2 = ({navigation}) => {
     const [username, setUsername] = useState('');
     const [setLocation] = useState("");
      const [hoto, setHoto] = useState("");
-  useFocusEffect(
-React.useCallback(() => {
+       // Use useFocusEffect to get user's data from firebase when the screen is in focus
+  useFocusEffect(React.useCallback(() => {
   const auth = getAuth();
   const user = auth.currentUser;
   if (user) {
@@ -55,6 +53,7 @@ React.useCallback(() => {
    const [topic, setTopic] = useState("")
    const [describe,setDescription] = useState("")
    const [category,setCategory] = useState("")
+   s
 //intializing firebase storage for images 
 const storage = getStorage();
 //upload images to the database
