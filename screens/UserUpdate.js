@@ -1,34 +1,33 @@
-import { KeyboardAvoidingView, FlatList,  StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAuth, getUser, updateEmail,updatePassword, updateProfile, createUserWithEmailAndPassword ,signInWithEmailAndPassword , onAuthStateChanged} from "firebase/auth";
-import { useNavigation, useRoute ,useFocusEffect} from '@react-navigation/native';
+import { getAuth} from "firebase/auth";
+import { useFocusEffect} from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { selectUid , selectAmail} from '../components/authSlice';
-import { getStorage, ref, s, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { selectUid } from '../components/authSlice';
 import { db } from '../firebase';
 import { getFirestore, collection, onSnapshot, doc, getDoc,query, where, getDocs, } from "firebase/firestore";
 import { setLoggedIn } from  '../components/authSlice';
 import { useDispatch } from 'react-redux';
-import { Dimensions } from 'react-native';
 
-
+// Define the UserUpdate component
 const UserUpdate = ({navigation}) => {
+  // Set up state variables for user data, email, username, and photo
     const [userData, setUserData] = useState(null);
    const [email, setEmail] = useState("")
   const [username, setUsername] = useState('');
   const [photo, setPhoto] = useState("");
+    // Get the user ID using the Redux selector
     const uid = useSelector(selectUid);
+    // Get the Redux dispatch function
      const dispatch = useDispatch();
-    //logout funcction
-
-
-
+    
+       // Define the handleLogout function to log the user out
      const handleLogout = ({ss}) => {
   dispatch(setLoggedIn(false));
  }
 
- //get user details
+  // Use the useEffect hook to get the user data from Firestore
 useFocusEffect(
 React.useCallback(() => {
   const auth = getAuth();
@@ -42,19 +41,6 @@ React.useCallback(() => {
 }, [])
 );
 
-useEffect(() => {
-
-const fetchUserData = async () => {
-try{
-  const docRef = doc(db, "users", uid)
-  const docSnap = await getDoc(docRef)
-  setUserData(docSnap.data())
-}catch(error){
-  console.log(error)
-}
-};
- fetchUserData();
-}, []);
 
 
    return (
