@@ -5,30 +5,35 @@ import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword , o
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const RegisterScreen = ({navigation}) => {
+ 
+  // State variables for email and password
   const [email, setEmail] = useState("")
   const [password,  setPassword] = useState("")
 
+  // Function to handle sign up
   const handleSignUp = () => {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
+        // User registration successful
         const user = userCredential.user;
         console.log(user);
-          alert("Registration successful!");
+        alert("Registration successful!");
       })
       .catch((error) => {
+        // If there's an error during registration, show the error message
         alert(error.message)
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage);
-        
       });
   };
 
-     const Login = () =>{
-      navigation.navigate("Login")
-    }
+  // Function to navigate to the Login screen
+  const Login = () =>{
+    navigation.navigate("Login")
+  }
+  
 
   
    return (
