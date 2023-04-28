@@ -1,4 +1,7 @@
-import { ScrollView, Button, TouchableOpacity,KeyboardAvoidingView, StyleSheet, Text, View, Image, FlatList } from 'react-native'
+// This is the Home screen component.
+// It displays a list of posts and allows users to filter them based on their events.
+// It also retrieves data from Firebase and updates the state with new data using useEffect and onSnapshot.
+import {  TouchableOpacity,KeyboardAvoidingView, StyleSheet, Text, View, Image, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import FooterNav from '../components/FooterNav'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,34 +14,46 @@ import { formatDistanceToNow } from 'date-fns';
 
 
 const HomeScreen = ({ navigation }) => {
+
+  // Set up state variables using the useState hook
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('All')
 
+  // Access user data from the Redux store using the useSelector hook
   const uid = useSelector(selectUid);
   const email = useSelector(selectAmail);
+
+  // Output the user ID to the console for debugging purposes
   console.log(uid);
-  
 
+  // Use the useEffect hook to fetch data from Firestore when the component mounts
   useEffect(() => {
-    const citiesRef = query(collection(db, "cities"), orderBy("timeStamp", "desc"));;
+    // Define a query to retrieve all cities from the Firestore "cities" collection,
+    // sorted by the "timeStamp" field in descending order
+    const citiesRef = query(collection(db, "cities"), orderBy("timeStamp", "desc"));
 
+    // Set up a snapshot listener on the query to receive realtime updates
     const unsubscribe = onSnapshot(citiesRef, (snapshot) => {
+      // Create a new array to hold the retrieved cities, with their ID and time elapsed since creation
       const newCities = [];
       snapshot.forEach(async (doc) => {
         const city = doc.data();
         const id = doc.id;
-         // Calculate the time elapsed since the post was created
-      const timeElapsed = formatDistanceToNow(city.timeStamp.toDate(), { addSuffix: true });
-      
+        // Calculate the time elapsed since the post was created using the date-fns library
+        const timeElapsed = formatDistanceToNow(city.timeStamp.toDate(), { addSuffix: true });
         newCities.push({ ...city, id, timeElapsed });
       });
+      // Update the component state with the new array of cities and mark loading as complete
       setCities(newCities);
       setLoading(false);
     });
+
+    // Return a function to unsubscribe from the snapshot listener when the component unmounts
     return unsubscribe;
   }, []);
 
+  // Define a function to handle selection of the "All" or "Favorites" options in the dropdown menu
   const handleEventSelection = (option) => {
     setSelectedOption(option);
   };
